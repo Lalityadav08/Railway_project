@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Entry Date</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/sidebar/sidebar.css">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        #stationName,
+        #stationName2 {
+            font-size: 16px !important;
+            /* Adjust the font size as per your preference */
+        }
+
+        #gear,
+        #gear2,
+        #zone {
+            font-size: 16px !important;
+        }
+
+        #gearID,
+        #gearID2 {
+            font-size: 16px !important;
+        }
+
+        #deficiencies,
+        #deficiencies2 {
+            font-size: 16px !important;
+        }
+
+        #dateOfInspection {
+            font-size: 20px !important;
+        }
+
+        #Type_Point,
+        #Type_Track {
+            font-size: 12px !important;
+        }
+
+        .new {
+            margin: 40px;
+        }
+
+        #deficiencyButton {
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        #gearButton {
+            border-radius: 10px;
+            margin-bottom: 10px;
+            margin-left: 5px;
+
+        }
+
+        #provideNumber {
+            width: 100px;
+        }
+
+        .force-new-line {
+            clear: both;
+        }
+
+        .input-container {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            align-items: flex-start;
+        }
+
+        .input-container input {
+            flex: 1 0 45%;
+            min-width: 500px;
+            height: auto;
+            margin: 5px;
+            resize: vertical;
+        }
+
+        .input-group {
+            flex: 1 1 calc(100% - 20px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group.mb-3 {
+            margin-bottom: 15px;
+        }
+    </style>
+
+    <%- include("includes/sidebarCssLinks.ejs") %>
+
+</head>
+
+<body>
+
+    <%- include("includes/sidebar.ejs") %>
+        <div class="page-content p-3" id="content">
+            <div class="container" style="margin-left:-5px;">
+                <div style="display: flex;">
+                    <button id="sidebarCollapse" type="button"
+                        class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4"><i
+                            class="fa fa-bars mr-2"></i><small
+                            class="text-uppercase font-weight-bold">Toggle</small></button>
+                </div>
+                <div class="container">
+
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label for="stationName" class="form-label">Station Name</label>
+                            <select class="form-select" id="stationName" name="stationName" required>
+                                <option value="" disabled selected>Select Station Name</option>
+                                <!-- Options will be populated dynamically -->
+                                <% stationNames.forEach(station=> { %>
+                                    <option value="<%= station %>">
+                                        <%= station %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="gear" class="form-label">Gear</label>
+                            <select class="form-select" id="gear" name="gear" required>
+                                <option value="" disabled selected>Select Gear</option>
+                                <!-- Options will be populated based on the selected station name -->
+                            </select>
+                        </div>
+
+
+                        <div class="form-group col-md-2">
+                            <label for="zone" class="form-label">Zone</label>
+                            <select class="form-select" id="zone" name="zone" required>
+                                <!-- Options will be populated based on the selected station name and gear -->
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-2" id="pointTypeSelect" style="display: none;">
+                            <label for="Type_Point" class="form-label">Type</label>
+                            <select id="Type_Point" name="gear_Point" class="form-control"
+                                style="height:  33px; width: 155px;">
+                                <option value="" disabled selected>Select Point Type</option>
+                                <% pointTypes.forEach(point=> { %>
+                                    <option value="<%= point %>">
+                                        <%= point %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-2" id="trackTypeSelect" style="display: none;">
+                            <label for="Type_Track" class="form-label">Type</label>
+                            <select id="Type_Track" name="gear_Track" class="form-control"
+                                style="height: 33px; width: 155px;">
+                                <option value="" disabled selected>Select Track Type</option>
+                                <% trackCircuitTypes.forEach(track=> { %>
+                                    <option value="<%= track %>">
+                                        <%= track %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-2">
+                            <label for="fromDate" class="form-label">From:</label>
+                            <input type="date" class="form-control" id="fromDate" name="fromDate" required>
+                        </div>
+
+                        <div class="w-100"></div>
+                        <div id="updateDateForm" style="display: none;">
+                            <label for="updateDateField">Select New Date for Update:</label>
+                            <input type="date" id="updateDateField" />
+                            <button id="submitUpdateDate">Submit Update</button>
+                          </div>
+                          
+                    </div>
+
+                    <table id="data-table" class="display">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th>Station Code</th>
+                                <th>Gear</th>
+                                <th>Gear ID</th>
+                                <th>Date Of Inspection</th>
+                                <th>Deficiency</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <%- include("includes/sidebarJsLinks.ejs") %>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <!-- Select2 JS -->
+
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/js/select2.min.js"></script>
+            <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+            <script src="/updateDate/updateDate.js"></script>
+            <script src="/sidebar/sidebar.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GEAR & DEFICIENCY FORM</title>
+
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/css/select2.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet"  href="/sidebar/sidebar.css">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    #stationName, #stationName2 {
+  font-size: 10px !important; 
+    }
+    #gear ,#gear2,#zone {
+        font-size: 16px !important;
+    }
+    #gearID, #gearID2{
+        font-size: 16px !important;
+    }
+    #deficiencies, #deficiencies2{
+        font-size: 16px !important;
+    }
+    #dateOfInspection{
+        font-size: 20px !important;
+    }
+    .new {
+    margin: 40px; /* Adjust the margin size as per your preference */
+    }
+    #deficiencyButton {
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    /* Add different margins to the second button */
+    #gearButton {
+      border-radius: 10px;
+      margin-bottom: 10px;
+      margin-left: 5px;
+    }
+    #priorityDefi {
+      border-radius: 10px;
+      margin-bottom: 10px;
+      margin-left: 5px;
+    }
+    #provideNumber {
+            width: 100px; /* Adjust the width to your desired size */
+    }
+    .force-new-line {
+    clear: both;
+    }
+
+    #gearIdList ul {
+    list-style-type: none; /* Remove default bullets */
+    padding-left: 0; /* Remove default padding */
+    font-size: 16px; /* Increase font size */
+    font-weight: bold; /* Make the text bold */
+}
+.bubble-notification {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+    background-color: #ffcccc;
+    color: #ff0000;
+    border: 1px solid #ff0000;
+    padding: 5px;
+    border-radius: 5px;
+    display: none;
+    z-index: 999;
+}
+
+#gearIdList ul li {
+    margin-bottom: 5px; /* Add margin between list items */
+}
+
+  </style>  
+
+    <%- include("includes/sidebarCssLinks.ejs") %>
+
+</head>
+<body>
+    
+    <%- include("includes/sidebar.ejs") %>
+ <div class="page-content p-3" id="content">
+    <div class="container" style="margin-left:-5px;">
+        <div style="display: flex;">
+            <button id="sidebarCollapse" type="button" class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4"><i class="fa fa-bars mr-2"></i><small class="text-uppercase font-weight-bold">Toggle</small></button>
+            <button type="button" class="btn btn-primary btn-active my-50" id="deficiencyButton">Gear Entry</button>
+            <button type="button" class="btn btn-primary my-50" id="gearButton">Deficiency Entry</button>
+            <button type="button" class="btn btn-primary my-50" id="priorityDefi">Priority Defi. Entry</button>
+            <h1 id="numberOfPoints" style = "color:rgb(74, 74, 244);   margin-left: 10px;"></h1>
+        </div>
+    
+ 
+        <div class="container">
+            <form id="gearForm" action="/addNewGear" method="post">
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <label for="stationName" class="form-label">Station Name</label>
+                        <select class="form-select" id="stationName" name="STN_CODE" required>
+                            <option value="" disabled selected>Select Station Name</option>
+                            <!-- Options will be populated dynamically -->
+                            <% stationNames.forEach(station => { %>
+                            <option value="<%= station %>"><%= station %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="gear_type">Gear Type</label>
+                        <select id="gear_type" class="form-control" name="Gear_type" required>
+                            <option value="" disabled selected>Select Gear Type</option>
+                            <!-- Options will be populated dynamically -->
+                            <% gearTypes.forEach(gear => { %>
+                            <option value="<%= gear %>"><%= gear%></option>
+                            <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="Zone" >Zone</label>
+                        <select id="Zone" name="Zone" class="form-control" required>
+                            <option value="" disabled selected>Select Zone Type</option>
+                            <% zones.forEach(zones => { %>
+                            <option value="<%= zones %>"><%= zones%></option>
+                            <% }) %>
+                        </select>
+                </div>
+
+
+                <div class="form-group col-md-2" id="pointTypeSelect" style="display: none;">
+                    <label for="Type_Point">Type</label>
+                    <select id="Type_Point" name="Type_Point" class="form-control" >
+                        <option value="" disabled selected>Select Point Type</option>
+                        <% pointTypes.forEach(point => { %>
+                        <option value="<%= point %>"><%= point %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                
+                <div class="form-group col-md-2" id="trackTypeSelect" style="display: none;">
+                    <label for="Type_Track">Type</label>
+                    <select id="Type_Track" name="Type_Track" class="form-control" >
+                        <option value="" disabled selected>Select Track Type</option>
+                        <% trackCircuitTypes.forEach(track => { %>
+                        <option value="<%= track %>"><%= track %></option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                     <!-- <div class="form-group col-md-2">
+                    <label for="Line" >Line</label>
+                    <input type="text" class="form-control" id="Line" name="Line" required>
+                </div> 
+                 -->
+
+                 
+        
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="gearIdContainer" class="row">
+                                <div id="gearIdList"></div>
+                                <!-- Original gearId input field -->
+                                <div class="form-group col-md-2">
+                                    <label for="gearId" class="gearIdLabel">GEAR ID</label>
+                                    <input type="text" class="form-control gearIdInput" name="Gear_ID[]" required>
+                                    <div class="bubble-notification" id="errorBubble"></div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row justify-content-end">
+                                <div class="col-md-auto">
+                                    <!-- Buttons for adding gearId input fields -->
+                                    <button type="button" class="btn btn-sm btn-primary addGearId">+6</button>
+                                    <button type="button" class="btn btn-sm btn-primary addGearId">+12</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="table-responsive">
+                    <table class="table" id="gearIdTable">
+                        <!-- Table headers -->
+                        <thead>
+                            <tr>
+                                <th>Serial No.</th>
+                                <th>Station Name</th>
+                                <th>Gear Type</th>
+                                <th>GEAR ID</th>
+                                <th>Zone</th>
+                                <th>Type</th>
+                                
+                            </tr>
+                        </thead>
+                        <!-- Table body will be populated dynamically -->
+                        <tbody>
+                            <!-- Data rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>  
+            </div>
+
+                    <!-- Review button -->
+            <div class="form-row">
+                <div class="form-group col-md-12 text-center">
+                    <button type="button" id="reviewButton" class="btn btn-primary">Review</button>
+                </div>
+            </div>
+
+            <!-- Submit button after the table -->
+            <div class="form-row" id="submitRow" style="display: none;">
+                <div class="form-group col-md-12 text-center">
+                    <button type="submit" id="finalSubmitButton" class="btn btn-primary">Final Submit</button>
+                </div>
+             </div>
+                           
+                
+            </form>
+        </div>
+
+        <div class="container">
+            <form id="DeficiencyForm" action="/addNewDeficiency" method="post">
+                <div class="form-group col-md-2">
+                    <label for="gear_type2">Gear Type</label>
+                    <select id="gear_type2" class="form-control" name="Gear_type_value" required>
+                        <option value="" disabled selected>Select Gear Type</option>
+                        <!-- Options will be populated dynamically -->
+                        <% gearTypes.forEach(gear => { %>
+                        <option value="<%= gear %>"><%= gear%></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-row" id="deficiencyInputs">
+                    <div class="form-group col-md-6">
+                        <label for="newDeficiency">Deficiency</label>
+                        <input type="text" id = "newDeficiency"class="form-control" name="Deficiency[]">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12 text-center">
+                        <button type="button" id="addDeficiency" class="btn btn-success">+</button>
+                        <button type="submit" id="submitButtonDeficiency" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="container2">
+            <form id="DeficiencyForm2" action="/addPriorityDeficiency" method="post">
+                <div class="form-group col-md-2">
+                    <label for="gear_type3">Gear Type</label>
+                    <select id="gear_type3" class="form-control" name="Gear_type_value" required>
+                        <option value="" disabled selected>Select Gear Type</option>
+                        <!-- Options will be populated dynamically -->
+                        <% gearTypes.forEach(gear => { %>
+                        <option value="<%= gear %>"><%= gear%></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-row" id="deficiencyInputs2">
+                    <div class="form-group col-md-6">
+                        <label for="newDeficiency">Deficiency</label>
+                        <input type="text" id = "newDeficiency2"class="form-control" name="Deficiency[]">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12 text-center">
+                        <button type="button" id="addDeficiency2" class="btn btn-success">+</button>
+                        <button type="submit" id="submitButtonDeficiency2" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+    </div>
+   
+    <%- include("includes/sidebarJsLinks.ejs") %>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/geardefientry/geardefi.js"></script>
+    <script src="/sidebar/sidebar.js"></script>
+    
+</body>
+</html>

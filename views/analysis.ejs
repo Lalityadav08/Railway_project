@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Analysis</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+  <link rel="stylesheet"  href="/sidebar/sidebar.css">
+  <style>
+
+    /* Align data details on the left side */
+.data-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.data-details-text {
+  display: flex;
+  align-items: center;
+}
+
+
+/* Style for individual data elements */
+.not-complied {
+  color: red;
+}
+
+.under-acknowledgement {
+  color: yellow;
+}
+
+.complied {
+  color: green;
+}
+
+.content-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .new {
+    margin: 40px; /* Adjust the margin size as per your preference */
+    }
+    .sub-row-content {
+        display: flex;
+        /* justify-content: space-between; */
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .table-container {
+    max-height: 100px; /* Set the maximum height for the container */
+    overflow: auto;   /* Enable scrolling for the container if needed */
+   }
+
+    #data-table {
+        width: 100%; /* Set the table width to 100% */
+        border-collapse: collapse;
+    }
+
+    #data-table th {
+        position: sticky;
+        top: 0;
+        background-color: #f8f9fa; /* Set a background color for the sticky header */
+    }
+    #provideNumber {
+            width: 100px; /* Adjust the width to your desired size */
+    }
+
+    #data-table td {
+      
+      font-size: 16px; 
+      font-weight: bold; 
+    }
+
+    .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: 20px; /* Add margin to separate from other elements */
+        }
+
+    /* CSS */
+    .chart-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin: 20px;
+    }
+
+    .chart-row {
+        display: flex;
+        justify-content: space-around;
+    }
+
+
+
+  </style>  
+ 
+    <%- include("includes/sidebarCssLinks.ejs") %>
+
+</head>
+<body>
+    
+    <%- include("includes/sidebar.ejs") %>
+ <div class="page-content p-3" id="content">
+    <div class="container" style="margin-left:-5px;">
+    <button id="sidebarCollapse" type="button" class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4"><i class="fa fa-bars mr-2"></i><small class="text-uppercase font-weight-bold">Toggle</small></button>
+
+        <div class="container">
+            
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <label for="selectOption" class="form-label">Select Options</label>
+                        <select class="form-select" id="selectOption" name="selectOption" required>
+                            <option value="" disabled selected>Select Option</option>
+                            <option value="ALL">All</option>
+                            <option value="SR_DEN">SR.DEN</option>
+                            <option value="AEN">AEN</option>
+                            <option value="CPWI">CPWI</option>
+                            <option value="PWI">PWI</option>
+                            <option value="Sr_DSTE">SR.DSTE</option>
+                            <option value="ADSTE">ADSTE</option>
+                            <option value="CSI">CSI</option>
+                            <option value="SI">SI</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2" id = optionDetails1 style="display: none; margin-top: 20px;">
+                        <!-- <label for="optionDetails" class="form-label"></label> -->
+                        <select class="form-select" id="optionDetails" name="optionDetails">
+                            <option value="" disabled selected>Select option</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2" style="margin-top: 20px;">
+                        <button type="submit" id="submitButton" class="btn btn-primary">Submit</button>
+                </div>      
+                </div>
+
+                <!-- HTML -->
+                <div class="container">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <!-- Data details on the left side -->
+                        <div class="data-details" style="display: none; margin-top: 20rem;">
+                          <p><span class ="heading" style="margin-right:20px;">Heading =></span>(<span class="not-complied">8</span> / <span class="under-acknowledgement">12</span> / <span class="complied">10</span>) <span class="total">10</span></p>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <!-- Pie chart on the right side -->
+                        <div class="chart-container" id="overallChartContainer">
+                          <canvas id="overallPieChart" width="400" height="400"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <!-- <div class="chart-container" id="overallChartContainer">
+                    <canvas id="overallPieChart" width="500" height="500"></canvas>
+                </div> -->
+
+            
+        </div>
+
+</div>
+</div>
+   
+    <%- include("includes/sidebarJsLinks.ejs") %>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/js/select2.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script> -->
+    <!-- Your custom script -->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>  -->
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/analysis/analysis.js"></script>
+    <script src="/sidebar/sidebar.js"></script>
+    
+</body>
+</html>

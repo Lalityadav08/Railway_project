@@ -1,0 +1,45 @@
+.form-row {
+  margin-bottom: 15px;
+  display: flex;
+}
+
+.submit-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+/* body {
+  font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
+  #form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+/*   
+  .row {
+    display: flex;
+    align-items: center;
+    margin: 10px;
+  }
+  
+  .row > * {
+    margin-right: 10px;
+  }
+  
+  .plusButton {
+    margin-left: auto;
+  } */
+  
+  /* #submitButton {
+    display: block;
+    margin: 20px auto;
+  }
+    */

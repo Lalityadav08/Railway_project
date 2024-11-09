@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entry Form</title>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"> -->
+
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/css/multi-select-tag.css"> -->
+<link rel="stylesheet"  href="/sidebar/sidebar.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  .form-container {
+    background-color: blue;
+    padding: 20px;
+    border: 1px solid #999;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    display: flex;
+  }
+  .col {
+    flex: 1;
+    padding: 10px;
+    color: white;
+  }
+  .row {
+    display: flex;
+    margin-top: 10px;
+  }
+  .dropdown {
+    flex:1;
+    margin-right: 10px;
+  }
+  .number-input {
+    flex: 1;
+    margin-right: 10px;
+    width : - 20px;
+  }
+</style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="dropdown">
+        <label for="stationName" class="form-label">Station Name</label>
+            <select class="form-select" id="stationName2" name="stationName">
+                <option value="" disabled selected>Select Station Name</option>
+                <!-- Options will be populated dynamically -->
+                <% stationNames.forEach(station => { %>
+                <option value="<%= station %>"><%= station %></option>
+                <% }) %>
+        </select>
+    </div>
+    <div class="dropdown">
+        <label for="gear" class="form-label">Gear</label>
+        <select class="form-select" id="gear" name="gear">
+            <option value="" disabled selected>Select Gear</option>
+        <!-- Options will be populated based on the selected station name -->
+        </select>
+    </div>
+    <div class="dropdown">
+        <label for="dateOfInspection" class="form-label">Date of Inspection</label>
+        <input type="date" class="form-control" id="dateOfInspection" name="dateOfInspection">
+    </div>
+  </div>
+  
+  <!-- Repeated form-container for 10 rows -->
+  <div class="form-container">
+    <div class="dropdown">
+        <label for="gearID" class="form-label">GearID</label>
+        <select class="form-select" id="gearID" name="gearID">
+            <option value="" disabled selected>Select Gear ID</option>
+            <!-- Options will be populated based on the selected station name and gear -->
+        </select>
+    </div>
+    <div class="dropdown">
+        <label for="deficiencies" class="form-label">Deficiencies</label>
+        <select id="deficiencies" class="form-select" name="deficiencies[]" multiple="multiple">
+            <!-- Options will be populated based on the selected gear -->
+        </select>
+    </div>
+    <div class="number-input"><input type="number" placeholder="No" id="stud"></div>
+    <div class="number-input"><input type="number" placeholder="No" id="provideNumber"></div>
+    <div class="number-input"><input type="number" placeholder="No"></div>
+    <div class="number-input"><input type="number" placeholder="No"></div>
+    <div class="number-input"><input type="number" placeholder="No"></div>
+    <div class="number-input"><input type="number" placeholder="No"></div>
+  </div>
+  <!-- Repeated form-container for 10 rows -->
+  
+  <!-- Repeat the above form-container for each of the 10 rows -->
+
+  <%- include("includes/sidebarJsLinks.ejs") %>
+  <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- Select2 JS -->
+  
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/js/select2.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script> -->
+  <!-- Your custom script -->
+  <!-- <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>  -->
+  <script src="/scripts.js"></script>
+  <script src="/gearscripts.js"></script>
+  <script src="/sidebar/sidebar.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Analysis</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="/sidebar/sidebar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <%- include("includes/sidebarCssLinks.ejs") %>
+        <style>
+            /* Existing styles for Donut Chart */
+            .donut-chart-container {
+                display: flex;
+                justify-content: flex-start;
+                align-items: flex-start;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                gap: 20px;
+            }
+
+            .chart-box {
+                width: 350px;
+                padding: 20px;
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+                position: relative;
+            }
+
+            .donut-chart {
+                width: 280px;
+                height: 280px;
+                border-radius: 50%;
+                position: relative;
+                margin: 0 auto;
+                box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.2);
+                background-color: lightgray;
+            }
+
+            .donut-center {
+                width: 110px;
+                height: 110px;
+                background-color: #ffffff;
+                border-radius: 50%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                font-size: 24px;
+                font-weight: bold;
+                color: #333;
+                box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            .legend-container {
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                padding: 10px 0;
+                margin-top: 20px;
+                gap: 10px;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+                margin-right: 5px;
+            }
+
+            .legend-color {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                margin-right: 5px;
+            }
+
+            .legend-label {
+                font-size: 12px;
+            }
+
+            .gauge-box-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center;
+                max-width: 350px;
+                margin-top: 20px;
+                flex-direction: row;
+            }
+
+            .gauge-box {
+                min-width: 150px;
+                padding: 10px;
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mini-gauge {
+                display: flex;
+                align-items: center;
+                margin: 5px 20px;
+                position: relative;
+            }
+
+            .gauge-bar {
+                width: 80px;
+                height: 20px;
+                border-radius: 10px;
+                background-color: lightgray;
+                position: relative;
+                margin-left: 5px;
+                box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .gauge-fill {
+                height: 100%;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 5px;
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+            }
+
+            .mini-gauge span {
+                font-weight: bold;
+                color: #333;
+            }
+
+            .gauge-max-value {
+                font-size: 10px;
+                font-weight: bold;
+                color: #333;
+                position: absolute;
+                right: -20px;
+                bottom: 0;
+                transform: translateY(50%);
+            }
+
+            .expand-btn {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                padding: 5px 10px;
+                font-size: 12px;
+                background-color: #007bff;
+                border: none;
+                border-radius: 50%;
+                color: #fff;
+                transition: transform 0.3s ease;
+            }
+
+            .expand-btn .fa-chevron-down {
+                transition: transform 0.3s ease;
+            }
+
+            .expand-btn.expanded .fa-chevron-down {
+                transform: rotate(180deg);
+            }
+
+            /* Compliance Performance Chart Styles */
+            .compliance-chart-container {
+                margin-top: 20px;
+                width: 100%;
+            }
+
+            /* New Box Style for Compliance Dashboard */
+            .compliance-box {
+                padding: 20px;
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .chart-section {
+                margin-bottom: 30px;
+            }
+
+            .chart-row {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .chart-container {
+                width: 45%;
+                text-align: center;
+            }
+
+            #deficiencySelect {
+                width: auto;
+                font-size: 12px;
+                font-weight: bold;
+                padding: 5px 10px;
+                border: 1px solid #007bff;
+                border-radius: 4px;
+                color: #333;
+                background-color: #fff;
+                outline: none;
+                box-shadow: none;
+                transition: border-color 0.2s;
+            }
+
+            #deficiencySelect:focus {
+                border-color: #007bff;
+            }
+
+            .chart-section select {
+                margin: 0 auto 0 50px;
+                display: block;
+            }
+        </style>
+</head>
+
+<body>
+    <%- include("includes/sidebar.ejs") %>
+
+        <div class="page-content p-3" id="content">
+            <div class="container" style="margin-left:-5px;">
+                <button id="sidebarCollapse" type="button"
+                    class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4">
+                    <i class="fa fa-bars mr-2"></i><small class="text-uppercase font-weight-bold">Toggle</small>
+                </button>
+                <div class="container">
+
+                    <!-- Chart Container for Donut and Gauges -->
+                    <div class="donut-chart-container">
+                        <!-- Donut Chart Box -->
+                        <div class="chart-box">
+                            <!-- Donut Chart -->
+                            <div class="donut-chart" id="donutChart">
+                                <div class="donut-center" id="donutCenter">
+
+                                    <div id="divisionNumbers"></div>
+                                </div>
+                            </div>
+
+                            <!-- Legend for SR.DEN -->
+                            <div class="legend-container" id="legendContainer">
+                                <!-- Dynamically Generated -->
+                            </div>
+
+                            <!-- Expand Button with Arrow Icon -->
+                            <button class="expand-btn" id="expandBtn">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+
+                        <!-- Mini-Gauge Box Container, aligned horizontally -->
+                        <div class="gauge-box-container" id="gaugeBox" style="display: none;">
+                            <!-- Dynamically generated mini-gauge boxes will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Compliance Performance Dashboard -->
+                    <div class="compliance-box">
+                        <div class="compliance-chart-container">
+                            <h2 class="text-center">Compliance Performance Dashboard</h2>
+                            <div class="chart-section">
+                                <div class="chart-row">
+                                    <div class="chart-container">
+                                        <canvas id="chart90days"></canvas>
+                                        <p>More Than 90 Days</p>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="chart120days"></canvas>
+                                        <p>More Than 120 Days</p>
+                                    </div>
+                                </div>
+                                <div class="chart-row">
+                                    <div class="chart-container">
+                                        <canvas id="chart180days"></canvas>
+                                        <p>More Than 180 Days</p>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="chart365days"></canvas>
+                                        <p>More Than 365 Days</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-section">
+                                <h3 class="text-center">Average Compliance Time</h3>
+                                <select id="deficiencySelect" class="form-control mb-3">
+                                    <option value="all">All Deficiencies</option>
+                                    <option value="complied">Complied Deficiencies Only</option>
+                                </select>
+                                <div class="chart-container">
+                                    <canvas id="averageComplianceChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include("includes/sidebarJsLinks.ejs") %>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+            <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+            <script src="/sidebar/sidebar.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.1.0"></script>
+            <!-- lates code currently commited -->
+            <script>
+                const fixedColors = ["#4CAF50", "#F44336", "#2196F3", "#FFEB3B", "#FF9800"];
+
+                // Donut Chart Data Fetch and Display
+                function fetchDonutChartData() {
+                    return fetch('getDonutChartData', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                        .then(response => response.json())
+                        .catch(error => console.error('Error fetching data:', error));
+                }
+
+                function generateDonutChart(data) {
+                    const totalDeficiency = data.division.total_deficiency;
+                    const totalCompliedDeficiency = data.division.total_complied_deficiency;
+                    document.getElementById("divisionNumbers").innerHTML = `${totalCompliedDeficiency}/${totalDeficiency}`;
+
+                    let startAngle = 0;
+                    const donutSegments = data.sr_dens.map((sr_den, index) => {
+                        const angle = (sr_den.total_deficiency / totalDeficiency) * 360;
+                        const color = fixedColors[index % fixedColors.length];
+
+                        const legendItem = `<div class="legend-item"><div class="legend-color" style="background-color: ${color};"></div><div class="legend-label">${sr_den.name}: ${sr_den.complied_deficiency}/${sr_den.total_deficiency}</div></div>`;
+                        document.getElementById("legendContainer").insertAdjacentHTML('beforeend', legendItem);
+
+                        let miniGaugeBox = `<div class="gauge-box">`;
+                        sr_den.aens.forEach(aen => {
+                            const fillPercentage = (aen.complied_deficiency / aen.total_deficiency) * 100;
+                            miniGaugeBox += `
+                    <div class="mini-gauge">
+                        <span>${aen.name}</span>
+                        <div class="gauge-bar">
+                            <div class="gauge-fill" style="width: ${fillPercentage}%; background-color: ${color};">
+                                <span class="gauge-filled-value">${aen.complied_deficiency}</span>
+                            </div>
+                            <span class="gauge-max-value">${aen.total_deficiency}</span>
+                        </div>
+                    </div>`;
+                        });
+                        miniGaugeBox += `</div>`;
+                        document.getElementById("gaugeBox").insertAdjacentHTML('beforeend', miniGaugeBox);
+
+                        const segment = `${color} ${startAngle}deg ${(startAngle + angle)}deg`;
+                        startAngle += angle;
+                        return segment;
+                    });
+
+                    document.getElementById("donutChart").style.background = `conic-gradient(${donutSegments.join(', ')})`;
+                }
+
+                document.getElementById("expandBtn").addEventListener("click", function () {
+                    const gaugeBox = document.getElementById("gaugeBox");
+                    gaugeBox.style.display = gaugeBox.style.display === "none" ? "flex" : "none";
+                    this.classList.toggle("expanded"); // Toggle arrow rotation
+                });
+
+                // Fetch Long Pending Performance Data and initialize charts
+                function fetchLongPendingPerformanceData() {
+                    return fetch('/getLongPendingPerformanceData', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                        .then(response => response.json())
+                        .catch(error => console.error('Error fetching long pending performance data:', error));
+                }
+
+                function initializeComplianceCharts(data) {
+                    function createChart(ctx, labels, data) {
+                        return new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    data: data,
+                                    backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff'],
+                                    borderColor: '#333',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y',
+                                scales: { x: { beginAtZero: true } },
+                                plugins: { legend: { display: false } }
+                            }
+                        });
+                    }
+
+                    createChart(document.getElementById('chart90days'), ['Sr.Den I', 'Sr.Den II', 'Sr.Den III', 'Sr.Den IV', 'Sr.Den V'], data['90days']);
+                    createChart(document.getElementById('chart120days'), ['Sr.Den I', 'Sr.Den II', 'Sr.Den III', 'Sr.Den IV', 'Sr.Den V'], data['120days']);
+                    createChart(document.getElementById('chart180days'), ['Sr.Den I', 'Sr.Den II', 'Sr.Den III', 'Sr.Den IV', 'Sr.Den V'], data['180days']);
+                    createChart(document.getElementById('chart365days'), ['Sr.Den I', 'Sr.Den II', 'Sr.Den III', 'Sr.Den IV', 'Sr.Den V'], data['365days']);
+                }
+
+                // Fetch Average Compliance Time Data and initialize average compliance chart
+                function fetchAverageComplianceTimeData() {
+                    return fetch('/getAverageComplianceTimeData', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                        .then(response => response.json())
+                        .catch(error => console.error('Error fetching average compliance time data:', error));
+
+                }
+
+                function initializeAverageComplianceChart(data) {
+                    // Parse data as numbers to avoid string-based operations
+                    const averageData = data.averageCompliance.all.map(value => Number(value));
+                    const compliedData = data.averageCompliance.complied.map(value => Number(value));
+
+                    // Function to calculate the average
+                    function calculateAverage(dataArray) {
+                        const sum = dataArray.reduce((acc, value) => acc + value, 0);
+                        return sum / dataArray.length;
+                    }
+
+                    // Calculate initial average for "all" deficiencies
+                    let initialAverage = calculateAverage(averageData);
+
+                    // Set up the chart
+                    let avgChart = new Chart(document.getElementById('averageComplianceChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['Sr.Den I', 'Sr.Den II', 'Sr.Den III', 'Sr.Den IV', 'Sr.Den V'],
+                            datasets: [{
+                                label: 'Days',
+                                data: averageData,
+                                backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff']
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'x',
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Days'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Sr.Den Levels'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: true, position: 'top' },
+                                annotation: {
+                                    annotations: [{
+                                        type: 'line',
+                                        mode: 'horizontal',
+                                        yMin: initialAverage,
+                                        yMax: initialAverage,
+                                        borderColor: 'red',
+                                        borderWidth: 2,
+                                        borderDash: [5, 5],
+                                        label: {
+                                            content: `Average: ${initialAverage.toFixed(2)}`,
+                                            enabled: true,
+                                            position: 'center',
+                                            backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                            color: 'white',
+                                            xAdjust: 50
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    });
+
+                    // Handle dropdown change to switch between "all" and "complied" data
+                    document.getElementById('deficiencySelect').addEventListener('change', function () {
+                        const updatedData = this.value === 'all' ? averageData : compliedData;
+                        const updatedAverage = calculateAverage(updatedData);
+
+                        // Update chart data
+                        avgChart.data.datasets[0].data = updatedData;
+
+                        // Update average line annotation
+                        avgChart.options.plugins.annotation.annotations[0].yMin = updatedAverage;
+                        avgChart.options.plugins.annotation.annotations[0].yMax = updatedAverage;
+                        avgChart.options.plugins.annotation.annotations[0].label.content = `Average: ${updatedAverage.toFixed(2)}`;
+
+                        // Redraw the chart
+                        avgChart.update();
+                    });
+                }
+
+                function calculateAverage(data) {
+                    const sum = data.reduce((acc, value) => acc + value, 0);
+                    return sum / data.length;
+                }
+
+                // Fetch and initialize all charts
+                fetchDonutChartData().then(data => generateDonutChart(data));
+                fetchLongPendingPerformanceData().then(data => initializeComplianceCharts(data));
+                fetchAverageComplianceTimeData().then(data => initializeAverageComplianceChart(data));
+            </script>
+</body>
+
+</html>

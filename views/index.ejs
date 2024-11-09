@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form with Bootstrap</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Select2 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/css/multi-select-tag.css">
+
+  <style>
+    /* Custom CSS to adjust the layout */
+    .form-row {
+      margin-bottom: 15px;
+      display: flex;
+    }
+
+    .submit-button-container {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <form id="logoutForm" action="/logout" method="post">
+        <div class="form-row submit-button-container">
+          <button type="submit" id="logoutButton" class="btn btn-danger">Logout</button>
+        </div>
+      </form>
+    <form id="inspectionForm" action="/saveForm" method="post">
+      <!-- First row with 3 fields -->
+      <div class="form-row">
+        <div class="col-md-4">
+          <label for="stationName" class="form-label">Station Name</label>
+          <select class="form-select" id="stationName" name="stationName">
+            <option value="" disabled selected>Select Station Name</option>
+            <!-- Options will be populated dynamically -->
+            <% stationNames.forEach(station => { %>
+                <option value="<%= station %>"><%= station %></option>
+              <% }) %>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label for="gear" class="form-label">Gear</label>
+          <select class="form-select" id="gear" name="gear">
+            <option value="" disabled selected>Select Gear</option>
+            <!-- Options will be populated based on the selected station name -->
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label for="gearID" class="form-label">GearID</label>
+          <select class="form-select" id="gearID" name="gearID">
+            <option value="" disabled selected>Select Gear ID</option>
+            <!-- Options will be populated based on the selected station name and gear -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Second row with 2 fields -->
+      <div class="form-row">
+        <div class="col-md-6">
+          <label for="dateOfInspection" class="form-label">Date of Inspection</label>
+          <input type="date" class="form-control" id="dateOfInspection" name="dateOfInspection">
+        </div>
+
+        <div class="col-md-6">
+          <label for="deficiencies" class="form-label">Deficiencies</label>
+          <select id="deficiencies"  class="form-select" name="deficiencies[]" multiple="multiple">
+            <!-- Options will be populated based on the selected gear -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Third row with Submit button centered -->
+      <div class="form-row submit-button-container">
+        <button type="submit" id="submitButton" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Bootstrap JS (Make sure to include the latest jQuery before this) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- Select2 JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+  <!-- Your custom script -->
+  <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>
+  <script src="/scripts.js"></script>
+</body>
+
+</html>

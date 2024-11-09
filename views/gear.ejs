@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Entry</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/css/select2.min.css" rel="stylesheet" />
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"> -->
+
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/css/multi-select-tag.css"> -->
+  <link rel="stylesheet"  href="/sidebar/sidebar.css">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+        #stationName2{
+  font-size: 16px !important; /* Adjust the font size as per your preference */
+    }
+    #gear2{
+        font-size: 16px !important;
+    }
+    #gearID2{
+        font-size: 16px !important;
+    }
+    #deficiencies2{
+        font-size: 16px !important;
+    }
+    #dateOfInspection{
+        font-size: 16px !important;
+    }
+  </style>
+ 
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <%- include("includes/sidebarCssLinks.ejs") %>
+
+</head>
+<body>
+    
+    <%- include("includes/sidebar.ejs") %>
+ <div class="page-content p-3" id="content">
+    <button id="sidebarCollapse" type="button" class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4"><i class="fa fa-bars mr-2"></i><small class="text-uppercase font-weight-bold">Toggle</small></button>
+
+    <form id="inspectionForm2" action="/saveFormGear" method="post">
+        <div class ="form-row">
+            <div class="form-group col-md-2 sm-6">
+                <label for="stationName" class="form-label">Station Name</label>
+                <select class="form-select" id="stationName2" name="stationName">
+                  <option value="" disabled selected>Select Station Name</option>
+                  <!-- Options will be populated dynamically -->
+                  <% stationNames.forEach(station => { %>
+                      <option value="<%= station %>"><%= station %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="form-group col-md-2 sm-6">
+                <label for="gear" class="form-label">Gear</label>
+                <select class="form-select" id="gear2" name="gear">
+                    <option value="" disabled selected>Select Gear</option>
+                    <!-- Options will be populated based on the selected station name -->
+                </select>
+            </div>   
+            
+            <div class="form-group col-md-2 sm-6">
+                <label for="gearID" class="form-label">GearID</label>
+                <select class="form-select" id="gearID2" name="gearID" multiple="multiple">
+                    <!-- Options will be populated based on the selected station name and gear -->
+                </select>
+            </div>
+            <div class="form-group col-md-2 sm-6">
+                <label for="dateOfInspection" class="form-label">Date of Inspection</label>
+                <input type="date" class="form-control" id="dateOfInspection" name="dateOfInspection">
+            </div>
+            
+            <div class="form-group col-md-2 sm-6">
+                <label for="deficiencies" class="form-label">Deficiencies</label>
+                <select id="deficiencies2"  class="form-select" name="deficiencies[]" >
+            <!-- Options will be populated based on the selected gear -->
+                </select>
+            </div>
+            <div class="container">
+                <div class="row">
+                  <div class="col-md-2 offset-md-5"> <!-- Center the button horizontally -->
+                    <button type="submit" id="submitButton" class="btn btn-primary btn-rectangle">Submit</button>
+                  </div>
+                </div>
+              </div>     
+        </div> 
+    </form>
+</div>
+   
+    <%- include("includes/sidebarJsLinks.ejs") %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/js/select2.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script> -->
+    <!-- Your custom script -->
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>
+    <script src="/gearscripts.js"></script>
+    <script src="/sidebar/sidebar.js"></script>
+
+</body>
+</html>

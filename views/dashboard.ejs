@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>New Entry</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"> -->
+
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/css/multi-select-tag.css"> -->
+    <link rel="stylesheet" href="/sidebar/sidebar.css">
+    <style>
+        #stationName,
+        #gear,
+        #selectOption,
+        #optionDetails {
+            font-size: 14px !important;
+            /* Adjust the font size as per your preference */
+        }
+
+        table,
+        .custom-table {
+            /* Create border between rows.*/
+            border-collapse: separate;
+            border-spacing: 0px 1px;
+            background-color: #e8eef5;
+            width: 100%;
+            text-align: center;
+        }
+
+
+        .custom-table tbody tr,
+        tbody tr {
+            border-bottom: 2px solid #b5d4fd;
+        }
+
+
+        table tbody tr:nth-child(odd),
+        .custom-table tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+            /* Light color */
+        }
+
+        table tbody tr:nth-child(even),
+        .custom-table tbody tr:nth-child(even) {
+            background-color: #ffffff;
+            /* Dark color */
+        }
+
+        thead:after,
+        .custom-table thead:after {
+            /* Increase border between thead and tbody.*/
+            display: block;
+            height: 0px;
+            content: "";
+            border: none;
+        }
+
+        th,
+        .custom-table th {
+            /* background-color: #dce0e6; */
+            background-color: #93CCEA;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        th,
+        td,
+        .custom-table th,
+        .custom-table td {
+            padding: 0.8em;
+            border-right: 3px solid white;
+        }
+
+        th:last-child,
+        td:last-child,
+        .custom-table th:last-child,
+        .custom-table td:last-child {
+            border: none;
+        }
+
+        td,
+        .custom-table td {
+            /* background-color: #eff4f6; */
+            background-color: #FFFF99;
+            font-size: 16px;
+        }
+
+        .table-container {
+            max-height: 400px;
+            /* Set the maximum height for the container */
+            overflow: auto;
+            /* Enable scrolling for the container if needed */
+        }
+
+        .custom-link {
+            text-decoration: none;
+            /* Remove the underline */
+            color: inherit;
+            /* Inherit the color from the parent element (usually black) */
+            cursor: pointer;
+            /* Change the cursor to a pointer on hover */
+        }
+
+        /* Style the link on hover (optional) */
+        .custom-link:hover {
+            text-decoration: underline;
+            /* Add underline on hover (or any other desired hover style) */
+        }
+
+        /* Custom CSS for the floating window */
+
+        .ui-dialog {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-height: calc(100% - 20px);
+            /* Adjust the height as per your requirement */
+            overflow: auto;
+            margin-left: 0;
+            /* Ensure no left margin */
+            min-width: 50%;
+            /* Set minimum width */
+        }
+
+        .ui-dialog .ui-dialog-titlebar-close {
+            margin-top: -8px;
+            /* Adjust the margin to center the cross mark vertically */
+        }
+    </style>
+
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <%- include("includes/sidebarCssLinks.ejs") %>
+
+</head>
+
+<body>
+
+    <%- include("includes/sidebar.ejs") %>
+        <div class="page-content p-3" id="content">
+            <div class="container" style="margin-left:-5px;">
+                <div style="display: flex;">
+                    <button id="sidebarCollapse" type="button"
+                        class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4"><i
+                            class="fa fa-bars mr-2"></i><small
+                            class="text-uppercase font-weight-bold">Toggle</small></button>
+                </div>
+                <div class="container">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label for="selectOption" class="form-label">Select Options</label>
+                            <select class="form-select" id="selectOption" name="selectOption" required>
+                                <option value="ALL" disabled selected>Select Option</option>
+                                <option value="ALL">ALL </option>
+                                <option value="STN_Code">Station Code</option>
+                                <option value="PWI">PWI</option>
+                                <option value="CPWI">CPWI</option>
+                                <option value="AEN">AEN</option>
+                                <option value="SR_DEN">SR.DEN</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-2" id=optionDetails1 style="display: none; margin-top: 20px;">
+                            <!-- <label for="optionDetails" class="form-label"></label> -->
+                            <select class="form-select" id="optionDetails" name="optionDetails">
+                                <option value="" disabled selected>Select option</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-2" id="stationName1" style="display: none; margin-top: 20px;">
+                            <select class="form-select" id="stationName" name="stationName">
+                                <option value="" disabled selected>Select Station Name</option>
+
+                            </select>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="gear" class="form-label">Gear</label>
+                            <select class="form-select" id="gear" name="gear" required>
+                                <option value="ALL GEAR">ALL GEAR</option>
+                                <!-- Options will be populated based on the selected station name -->
+                                <% gears.forEach(gear => { %>
+                                    <option value="<%= gear %>">ALL <%= gear %></option>
+                                <% }) %>
+                                
+                                <% pointTypes.forEach(point => { %>
+                                    <% if (!["Mech. (Hand Plunger Lock)", "Siemens", "Point Zone", "Straight"].includes(point)) { %>
+                                        <option value="<%= point %>"><%= point %></option>
+                                    <% } %>
+                                <% }) %>
+                                
+                                <% trackCircuitTypes.forEach(track => { %>
+                                    <% if (!["Mech. (Hand Plunger Lock)", "Siemens", "Point Zone", "Straight"].includes(track)) { %>
+                                        <option value="<%= track %>"><%= track %></option>
+                                    <% } %>
+                                <% }) %>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group col-md-3" style="margin-top: 25px; margin-left: 10px; display: none;">
+                            <!-- Center the button horizontally -->
+                            <button type="submit" id="submitButton" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                    <div id="tableContainer">
+                    </div>
+                    <h3 style="margin-top: 30px;">Long Pending Deficiencies</h3>
+                    <div id="tableLongDefiData">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include("includes/sidebarJsLinks.ejs") %>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <!-- Jquery UI (floating window) -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+            <!-- Select2 JS -->
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/js/select2.min.js"></script>
+            <script src="/dash/dashboard.js"></script>
+
+            <script src="/sidebar/sidebar.js"></script>
+
+</body>
+
+</html>

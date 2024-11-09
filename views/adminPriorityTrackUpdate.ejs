@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Update Priority Track Deficiencys</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet"  href="/sidebar/sidebar.css">
+  <style>
+    #updateForm {
+      display: none; 
+    }
+  </style>
+  <%- include("includes/sidebarCssLinks.ejs") %>
+</head>
+<body>
+    
+  <%- include("includes/sidebar.ejs") %>
+  <div class="page-content p-3" id="content">
+    <div class="container" style="margin-left:-5px;">
+      <button id="sidebarCollapse" type="button" class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4"><i class="fa fa-bars mr-2"></i><small class="text-uppercase font-weight-bold">Toggle</small></button>
+      <div class="container">
+        <div class="table-container">
+          <table id="data-table" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+              <tr>
+                <th style="font-weight: bold; font-size: 18px;">id</th>
+                <th style="font-weight: bold; font-size: 18px;">deficiency</th>
+                <th style="font-weight: bold; font-size: 18px;">Priority</th>
+                <th style="font-weight: bold; font-size: 18px;">Change Priority</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for (const dataItem of data) { %>
+                <tr>
+                  <td style="font-weight: bold; font-size: 14px;"><%= dataItem.id %></td>
+                  <td style="font-weight: bold; font-size: 14px;"><%= dataItem.deficiency %></td>
+                  <td style="font-weight: bold; font-size: 14px;"><%= dataItem.priority %></td>
+                  <td style="font-weight: bold; font-size: 14px;">
+                    <select class="form-control priority-dropdown" data-id-attribute="<%= dataItem.id %>">
+                      <% for (let i = 1; i <= data.length; i++) { %>
+                        <option value="<%= i %>" <%= i === dataItem.priority ? 'selected' : '' %>>Priority <%= i %></option>
+                      <% } %>
+                    </select>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <%- include("includes/sidebarJsLinks.ejs") %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+  <script src="/sidebar/sidebar.js"></script>
+  <script>
+    $(document).ready(function() {
+        $.fn.dataTable.ext.errMode = 'none';
+        var dataTable = $('#data-table').DataTable({
+            paging: true,
+            lengthChange: true,          
+        });
+        $('#data-table').on('error.dt', function(e, settings, techNote, message) {
+            console.log('An error has been reported by DataTables:', message);
+        });
+
+      $('#data-table').on('change', '.priority-dropdown', function() {
+        var id = $(this).data('id-attribute');
+        var newPriority = $(this).val();
+        var deficiency = $(this).closest('tr').find('td:nth-child(2)').text();
+        
+        var confirmPrioritize = confirm('Are you sure you want to change the priority of the deficiency "' + deficiency + '" to ' + newPriority + '?');
+        
+        if (confirmPrioritize) {
+          $.ajax({
+            url: '/updateprioritizeTrackDeficiency',
+            method: 'POST',
+            data: { id: id, priority: newPriority },
+            success: function(response) {
+              dataTable.clear();
+              var tableRows = '';
+              for (var key in response.data) {
+                if (response.data.hasOwnProperty(key)) {
+                    var item = response.data[key];
+                    var options = '';
+
+                    for (let i = 1; i <= response.data.length; i++) {
+                        options += `<option value="${i}" ${i === item.priority ? 'selected' : ''}>Priority ${i}</option>`;
+                    }
+
+                    tableRows += `
+                        <tr>
+                        <td style="font-weight: bold; font-size: 14px;">${item.id}</td>
+                        <td style="font-weight: bold; font-size: 14px;">${item.deficiency}</td>
+                        <td style="font-weight: bold; font-size: 14px;">${item.priority}</td>
+                        <td>
+                            <select class="form-control priority-dropdown" data-id-attribute="${item.id} ">
+                            ${options}
+                            </select>
+                        </td>
+                        </tr>`;
+                    }
+                }
+              dataTable.rows.add($(tableRows)).draw();
+              alert('Deficiency priority updated successfully');
+            },
+            error: function(xhr, status, error) {
+              console.error('Error changing priority:', error);
+              alert('An error occurred while changing the priority. Please try again later.');
+            }
+          });
+        }
+      });
+
+      $('#cancelButton').click(function() {
+        $('#updateForm').hide();
+      });
+    });
+  </script>
+</body>
+</html>

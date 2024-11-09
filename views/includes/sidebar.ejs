@@ -1,0 +1,184 @@
+<!-- Vertical navbar -->
+<div class="vertical-nav bg-white " id="sidebar">
+    <div class="nav-link  nav-link-flush overflow-auto vh-100">
+     <div class="py-4 px-3 mb-4 bg-light  ">
+    
+        <div class="media d-flex align-items-center">
+          <!-- <img loading="lazy" src="images/p-1.png" alt="..." width="30" height="30" class="mr-3 rounded-circle img-thumbnail shadow-sm"> -->
+          
+          <div class="media-body">
+            <h4 class="m-0"><%= req.user.username %></h4>
+            <p class="font-weight-normal text-muted mb-0">Dashboard</p>
+          </div>
+        </div>
+        </div>
+   
+  
+      <ul class="nav flex-column bg-white mb-0">
+
+        <ul>
+
+      
+          <% if (req.user.preferences === "Signal") { %>
+
+            <li class="nav-item">
+              <a href="/" class="nav-link text-dark">
+                  <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+                  Dashboard
+              </a>
+          </li>
+      
+          <li class="nav-item">
+              <a href="/entry-form" class="nav-link text-dark">
+                  <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+                  entry-form
+              </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="/chartAnalysis" class="nav-link text-dark">
+                <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+               Analysis
+            </a>
+        </li>
+
+          <li class="nav-item">
+            <a href="/stationGearForm" class="nav-link text-dark">
+              <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+              Station-Gear Form
+            </a>
+          </li>
+            
+            <li class="nav-item">
+              <a href="/acknowledge-details" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Acknowledge
+              </a>
+            </li>
+
+           
+            
+          <% } else if (req.user.preferences === "ENG") { %>
+
+            <li class="nav-item">
+              <a href="/" class="nav-link text-dark">
+                  <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+                  Dashboard
+              </a>
+          </li>
+      
+          <li class="nav-item">
+              <a href="/entry-form" class="nav-link text-dark">
+                  <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+                  entry-form
+              </a>
+          </li>
+            <li class="nav-item">
+              <a href="/compliance-entry" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Compliance
+              </a>
+            </li>
+          
+
+          <% } else if (req.user.preferences === "Admin") { %>
+
+            <li class="nav-item">
+              <a href="/" class="nav-link text-dark">
+                  <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+                  Dashboard
+              </a>
+          </li>
+          <li class="nav-item">
+            <a href="/updateStationData" class="nav-link text-dark">
+                <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+                update Station Details
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/updateDate" class="nav-link text-dark">
+                <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+                update Deficiency Date
+            </a>
+        </li>
+            <li class="nav-item">
+              <a href="/userForm" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                User Form
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/gearForm" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Update Gear
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/zoneForm" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Update Zone
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/gearTypeForm" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Update GearType
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/pointForm" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Update Point
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/trackCircuitForm" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Update Track Circuit
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/deficiencyForm" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Update Point Deficiency
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/pointPriorityForm" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Update Priority Point Def.
+              </a>
+            </li>
+            
+            <li class="nav-item">
+              <a href="/deficiencyTrackForm" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Update Track Circuit Def.
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="/trackPriorityForm" class="nav-link text-dark">
+                <i class="fa fa-cubes mr-3 text-primary fa-fw"></i>
+                Update Priority Track Def.
+              </a>
+            </li>
+        <% } %>
+          
+      
+          <li class="nav-item">
+              <a href="/logout" class="nav-link text-dark">
+                  <i class="fa fa-picture-o mr-3 text-primary fa-fw"></i>
+                  logout
+              </a>
+          </li>
+      
+  </div>
+  </div>
+  
+  
+  
+  
+  
+  
+  

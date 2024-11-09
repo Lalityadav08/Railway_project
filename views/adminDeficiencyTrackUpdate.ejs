@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Update Track Deficiency</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet"  href="/sidebar/sidebar.css">
+  <style>
+    #updateForm {
+      display: none; 
+    }
+  </style>
+  <%- include("includes/sidebarCssLinks.ejs") %>
+</head>
+<body>
+    
+  <%- include("includes/sidebar.ejs") %>
+  <div class="page-content p-3" id="content">
+    <div class="container" style="margin-left:-5px;">
+      <button id="sidebarCollapse" type="button" class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4"><i class="fa fa-bars mr-2"></i><small class="text-uppercase font-weight-bold">Toggle</small></button>
+      <div class="container">
+        <div class="table-container">
+          <table id="data-table" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+              <tr>
+                <th style="font-weight: bold; font-size: 18px;">SR NO.</th>
+                <th style="font-weight: bold; font-size: 18px;">Deficiencies</th>
+                <th style="font-weight: bold; font-size: 18px;">Update</th>
+                <th style="font-weight: bold; font-size: 18px;">Prioritize</th>
+                <th style="font-weight: bold; font-size: 18px;">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for (const dataItem of data) { %>
+                <tr>
+                  <td style="font-weight: bold; font-size: 14px;"><%= dataItem.SR_NO %></td>
+                  <td style="font-weight: bold; font-size: 14px;"><%= dataItem.Track_circuit %></td>
+                  <td style="font-weight: bold; font-size: 14px;"><button class="btn-edit" data-deficiency-attribute="<%= dataItem.Track_circuit %>" data-station-attribute="<%= dataItem.SR_NO %>">Update</button></td>
+                  <td style="font-weight: bold; font-size: 14px;"><button class="btn-prioritize" data-deficiency-attribute="<%= dataItem.Track_circuit %>" data-station-attribute="<%= dataItem.SR_NO %>">Prioritize</button></td>
+                  <td style="font-weight: bold; font-size: 14px;"><button class="btn-delete" data-deficiency-attribute="<%= dataItem.Track_circuit %>" data-station-attribute="<%= dataItem.SR_NO %>">Delete</button></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+        <!-- Form for updating deficiency -->
+        <form id="updateForm">
+          <div class="form-group">
+            <label for="deficiencyInput">Deficiency:</label>
+            <input type="text" class="form-control" name="deficiencyInput" id="deficiencyInput">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="button" class="btn btn-secondary mt-2" id="cancelButton">Cancel</button>
+        </form>
+        <!-- End of Form -->
+      </div>
+    </div>
+  </div>
+  <%- include("includes/sidebarJsLinks.ejs") %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+  <script src="/sidebar/sidebar.js"></script>
+  <script>
+    $(document).ready(function() {
+      var dataTable = $('#data-table').DataTable({
+ 
+        paging: true,
+        lengthChange: true, 
+      });
+      $('#data-table tbody').on('click', '.btn-edit', function() {
+        var serialNo = $(this).data('station-attribute');
+        var deficiency = $(this).data('deficiency-attribute');
+        $('#deficiencyInput').val(deficiency);
+        $('#updateForm').show(); 
+
+        $('#updateForm').data('serialNo', serialNo);
+      });
+      $('#data-table').on('page.dt', function() {
+        dataTable.destroy();
+        dataTable = $('#data-table').DataTable({
+          paging: true, 
+          lengthChange: true, 
+        });
+      });
+      $('#updateForm').submit(function(event) {
+        event.preventDefault();
+        var newValue = $('#deficiencyInput').val();
+        var serialNo = $('#updateForm').data('serialNo');
+        var originalValue = $('[data-station-attribute="' + serialNo + '"]').data('deficiency-attribute');
+        if (originalValue !== newValue) {
+          var confirmMessage = 'Original Value: ' + originalValue + '\nChanged Value: ' + newValue + '\n\nAre you sure you want to update?';
+          if (confirm(confirmMessage)) {
+            $.ajax({
+              url: '/updateDeficienyTrack',
+              method: 'POST',
+              data: { newValue: newValue, serialNo: serialNo },
+              success: function(response) {
+                dataTable.clear();
+                var tableRows = '';
+                for (var key in response.data) {
+                    if (response.data.hasOwnProperty(key)) {
+                        var item = response.data[key];
+                        tableRows += '<tr>' +
+                            '<td style="font-weight: bold; font-size: 18px;">' + item.SR_NO + '</td>' +
+                            '<td style="font-weight: bold; font-size: 18px;">' + item.Track_circuit + '</td>' +
+                            '<td><button style="font-weight: bold; font-size: 18px;" class="btn-edit" data-deficiency-attribute="' + item.Track_circuit + '" data-station-attribute="' + item.SR_NO + '">Update</button></td>' +
+                            '<td><button style="font-weight: bold; font-size: 18px;" class="btn-prioritize" data-deficiency-attribute="' + item.Track_circuit + '" data-station-attribute="' + item.SR_NO + '">Prioritize</button></td>' +
+                            '<td><button style="font-weight: bold; font-size: 18px;" class="btn-delete" data-deficiency-attribute="' + item.Track_circuit + '" data-station-attribute="' + item.SR_NO + '">Delete</button></td>' +
+                            '</tr>';
+                    }
+                }
+                dataTable.rows.add($(tableRows)).draw();
+                alert('Data updated successfully');
+              },
+              error: function(xhr, status, error) {
+                console.error('Error updating data:', error);
+              }
+            });
+          }
+        } else {
+          alert('You haven\'t made any changes.');
+        }
+        $('#updateForm').hide();
+      });
+
+      $('#data-table tbody').on('click', '.btn-delete', function() {
+        var serialNo = $(this).data('station-attribute');
+        var deficiency = $(this).data('deficiency-attribute');
+        var confirmDelete = confirm('Are you sure you want to delete the deficiency with serial number ' + serialNo + '?');
+        if (confirmDelete) {
+          $.ajax({
+            url: '/deleteDeficiencyTrack',
+            method: 'POST',
+            data: { serialNo: serialNo },
+            success: function(response) {
+                dataTable.clear();
+                var tableRows = '';
+                for (var key in response.data) {
+                    if (response.data.hasOwnProperty(key)) {
+                        var item = response.data[key];
+                        tableRows += '<tr>' +
+                            '<td style="font-weight: bold; font-size: 18px;">' + item.SR_NO + '</td>' +
+                            '<td style="font-weight: bold; font-size: 18px;">' + item.Track_circuit + '</td>' +
+                            '<td><button style="font-weight: bold; font-size: 18px;" class="btn-edit" data-deficiency-attribute="' + item.Track_circuit + '" data-station-attribute="' + item.SR_NO + '">Update</button></td>' +
+                            '<td><button style="font-weight: bold; font-size: 18px;" class="btn-prioritize" data-deficiency-attribute="' + item.Track_circuit + '" data-station-attribute="' + item.SR_NO + '">Prioritize</button></td>' +
+                            '<td><button style="font-weight: bold; font-size: 18px;" class="btn-delete" data-deficiency-attribute="' + item.Track_circuit + '" data-station-attribute="' + item.SR_NO + '">Delete</button></td>' +
+                            '</tr>';
+                    }
+                }
+              dataTable.rows.add($(tableRows)).draw();
+              //dataTable.row($(this).parents('tr')).remove().draw();
+              alert('Deficiency deleted successfully');
+            },
+            error: function(xhr, status, error) {
+              console.error('Error deleting deficiency:', error);
+              alert('An error occurred while deleting deficiency. Please try again later.');
+            }
+          });
+        }
+      });
+
+
+      $('#data-table tbody').on('click', '.btn-prioritize', function() {
+        var serialNo = $(this).data('station-attribute');
+        var deficiency = $(this).data('deficiency-attribute');
+        
+        // Send AJAX request to update priority
+        $.ajax({
+            url: '/prioritizeTrackDeficiency',
+            method: 'POST',
+            data: { serialNo: serialNo, deficiency: deficiency },
+            success: function(response) {
+              dataTable.clear();
+              var tableRows = '';
+              for (var key in response.data) {
+                if (response.data.hasOwnProperty(key)) {
+                  var item = response.data[key];
+                  tableRows += '<tr>' +
+                    '<td style="font-weight: bold; font-size: 18px;">' + item.SR_NO + '</td>' +
+                    '<td style="font-weight: bold; font-size: 18px;">' + item.Track_circuit + '</td>' +
+                    '<td><button style="font-weight: bold; font-size: 18px;" class="btn-edit" data-deficiency-attribute="' + item.Track_circuit + '" data-station-attribute="' + item.SR_NO + '">Update</button></td>' +
+                    '<td><button style="font-weight: bold; font-size: 18px;" class="btn-prioritize" data-deficiency-attribute="' + item.Track_circuit + '" data-station-attribute="' + item.SR_NO + '">Prioritize</button></td>' +
+                    '<td><button style="font-weight: bold; font-size: 18px;" class="btn-delete" data-deficiency-attribute="' + item.Track_circuit + '" data-station-attribute="' + item.SR_NO + '">Delete</button></td>' +
+                    '</tr>';
+                }
+              }
+              dataTable.rows.add($(tableRows)).draw();
+              alert('Priority updated successfully');
+            },
+            error: function(xhr, status, error) {
+              console.error('Error updating priority:', error);
+            }
+          });
+      });
+
+      $('#cancelButton').click(function() {
+        $('#updateForm').hide();
+      });
+    });
+  </script>
+</body>
+</html>

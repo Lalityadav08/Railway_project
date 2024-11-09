@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Analysis</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Selectize.js CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.default.min.css">
+
+
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet"  href="/sidebar/sidebar.css">
+  <style>
+
+    /* Align data details on the left side */
+.data-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.data-details-text {
+  display: flex;
+  align-items: center;
+}
+
+
+/* Style for individual data elements */
+.not-complied {
+  color: red;
+}
+
+.under-acknowledgement {
+  color: yellow;
+}
+
+.complied {
+  color: green;
+}
+
+.content-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .new {
+    margin: 40px; /* Adjust the margin size as per your preference */
+    }
+    .sub-row-content {
+        display: flex;
+        /* justify-content: space-between; */
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .table-container {
+    max-height: 100px; /* Set the maximum height for the container */
+    overflow: auto;   /* Enable scrolling for the container if needed */
+   }
+
+    #data-table {
+        width: 100%; /* Set the table width to 100% */
+        border-collapse: collapse;
+    }
+
+    #data-table th {
+        position: sticky;
+        top: 0;
+        background-color: #f8f9fa; /* Set a background color for the sticky header */
+    }
+    #provideNumber {
+            width: 100px; /* Adjust the width to your desired size */
+    }
+
+    #data-table td {
+      
+      font-size: 16px; 
+      font-weight: bold; 
+    }
+
+    .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: 20px; /* Add margin to separate from other elements */
+        }
+
+    /* CSS */
+    .chart-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin: 20px;
+    }
+
+    .chart-row {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    table {
+    /* Create border between rows.*/
+    border-collapse: separate;
+    border-spacing: 0px 1px ;
+    background-color: #697a91;
+    width: 100%;
+}
+
+tbody tr {
+      border-bottom: 2px  solid black; 
+    }
+thead:after {
+    /* Increase border between thead and tbody.*/
+    display: block;
+    height: 0px;
+    content: "";
+    border: none;
+}
+th {
+    background-color: #dce0e6;
+    text-align: center;
+    font-size: 18px; 
+}
+th,
+td {
+    padding: 0.8em;
+    border-right: 3px solid white;
+}
+th:last-child,
+td:last-child {
+    border: none;
+}
+td {
+    background-color: #eff4f6;
+    font-size: 16px; 
+}
+
+.blue-button {
+    background-color: blue;
+    color: white;
+    padding: 10px 20px; /* Add padding for better visual appearance */
+    border: none; /* Remove border */
+    cursor: pointer;
+  }
+  .center-button {
+    margin-top: 20px;
+    text-align: center;
+  }
+  .table-container {
+  max-height: 400px; /* Set the maximum height for the container */
+  overflow: auto;   /* Enable scrolling for the container if needed */
+}
+
+
+  </style>  
+ 
+    <%- include("includes/sidebarCssLinks.ejs") %>
+
+</head>
+<body>
+    
+    <%- include("includes/sidebar.ejs") %>
+ <div class="page-content p-3" id="content">
+    <div class="container" style="margin-left:-5px;">
+    <button id="sidebarCollapse" type="button" class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4"><i class="fa fa-bars mr-2"></i><small class="text-uppercase font-weight-bold">Toggle</small></button>
+        <div class="container">
+            <div class="table-container">
+            <table id="data-table"> 
+                <thead>
+                  <tr>
+                    <th>Station Code</th>
+                    <th>Gear</th>
+                    <th>Gear ID</th>
+                    <th>Date of Inspection</th>
+                    <th>Deficiencies</th>
+                    <th>Update</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for (const dataItem of data) { %>
+                    <tr>
+                      <td><%= dataItem.STN_code %></td>
+                      <td><%= dataItem.Gear %></td>
+                      <td><%= dataItem.Gear_ID %></td>
+                      <td><%= dataItem.Date_of_inspection %></td>
+                      <td>
+                        <!-- Parse the DEFICIENCIES string as JSON, and iterate through the array -->
+                        <% const deficienciesArray = dataItem.DEFICIENCIES.split(','); %>
+                        <% for (const deficiency of deficienciesArray) { %>
+                        <%= deficiency.trim() %><br />
+                        <% } %>
+                      </td>
+                      <td><button class="btn-edit"  data-station-attribute="<%= dataItem.STN_code %>" data-Gear-attribute="<%= dataItem.Gear %>" data-GearId-attribute="<%= dataItem.Gear_ID %>"  data-date-attribute = "<%= dataItem.Date_of_inspection %>"data-serial-attribute="<%= JSON.stringify(dataItem.SR_NO) %>" data-defi-attribute ="<%= JSON.stringify(dataItem.DEFICIENCIES) %>">Update</button></td>  
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+              </div>
+
+ 
+             <div class="center-button">
+                <button class="blue-button" onclick="location.href='/'">Return to Form</button>
+              </div>
+              
+              <div class="container" style="margin-left:-5px;">
+    
+              
+                <!-- The update form (initially hidden) -->
+                <div id="update-form" style="display: none;">
+                  <!-- Add your input fields for updating data here -->
+                  <!-- Example: -->
+                  <label>Station Name: <input type="text" id="station-name" readonly></label><br>
+                  <label>Gear: <input type="text" id="gear" readonly></label><br>
+                  <label>Gear ID: <input type="text" id="gear-id" readonly></label><br>
+                  
+                  <label>Date of Deficiency: <input type="text" id="date-of-deficiency" readonly></label><br>
+                  <div class="form-group col-md-3 sm-4">
+                  <label for="Deficiencies" class="form-label">Deficiencies</label>
+                  <select class="form-select" id="Deficiencies" name="Deficiencies[]" multiple="multiple">
+                      <!-- Options will be populated based on the selected station name and gear -->
+                  </select>
+                  </div>
+                  <button id="submit-update" class="blue-button">Submit Update</button>
+                </div>
+              </div>
+              
+              
+        </div>
+
+</div>
+</div>
+
+
+   
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/js/standalone/selectize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script> 
+    <!-- Your custom script -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/sidebar/sidebar.js"></script>
+    <script src="/renderTable/renderTable.js"></script>    
+</body>
+</html>

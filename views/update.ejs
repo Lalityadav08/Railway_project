@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Complaince</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+  <link rel="stylesheet"  href="/sidebar/sidebar.css">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .new {
+    margin: 40px; /* Adjust the margin size as per your preference */
+    }
+    .sub-row-content {
+        display: flex;
+        /* justify-content: space-between; */
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .table-container {
+    max-height: 100px; /* Set the maximum height for the container */
+    overflow: auto;   /* Enable scrolling for the container if needed */
+   }
+
+    #data-table {
+        width: 100%; /* Set the table width to 100% */
+        border-collapse: collapse;
+    }
+
+    #data-table th {
+        position: sticky;
+        top: 0;
+        background-color: #f8f9fa; /* Set a background color for the sticky header */
+    }
+    #provideNumber {
+            width: 100px; /* Adjust the width to your desired size */
+    }
+
+    #data-table td {
+      
+      font-size: 16px; 
+      font-weight: bold; 
+    }
+
+    #data-table tbody tr {
+      border-bottom: 2px solid black; /* Adjust the border style and color as needed */
+    }
+/* 
+    .my-custom-popup-class {
+    width: 80%; 
+    max-width: 800px; 
+    height: auto; 
+    padding: 20px;
+} */
+
+  </style>  
+ 
+    <%- include("includes/sidebarCssLinks.ejs") %>
+
+</head>
+<body>
+    
+    <%- include("includes/sidebar.ejs") %>
+ <div class="page-content p-3" id="content">
+    <div class="container" style="margin-left:-5px;">
+    <button id="sidebarCollapse" type="button" class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4"><i class="fa fa-bars mr-2"></i><small class="text-uppercase font-weight-bold">Toggle</small></button>
+
+        <div class="container">
+            
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <label for="selectOption" class="form-label">Select Options</label>
+                        <select class="form-select" id="selectOption" name="selectOption" required>
+                            <option value="" disabled selected>Select Option</option>
+                            <option value="STN_Code">Station Code</option>
+                            <option value="PWI">PWI</option>
+                            <option value="CPWI">CPWI</option>
+                            <option value="AEN">AEN</option>
+                            <option value="SR_DEN">SR.DEN</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2" id = optionDetails1 style="display: none; margin-top: 20px;">
+                        <!-- <label for="optionDetails" class="form-label"></label> -->
+                        <select class="form-select" id="optionDetails" name="optionDetails">
+                            <option value="" disabled selected>Select option</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-2" id = "stationName1" style="display: none; margin-top: 20px;">
+                        <select class="form-select" id="stationName" name="stationName">
+                            <option value="" disabled selected>Select Station Name</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                      <label for="complianceDropdown" class="form-label">Complaince Options</label>
+                      <select class="form-select" id="complianceDropdown" name="complianceDropdown" required>
+                          <!-- <option value="" disabled selected>Select Option</option> -->
+                          <option value="ALL">ALL</option>
+                          <option value="NO" selected>NO</option>
+                          <option value="YES">YES</option>
+                      </select>
+                  </div>
+                    <div class="form-group col-md-2" style="margin-top: 20px;">
+                        <button type="submit" id="submitButton" class="btn btn-primary">Submit</button>
+                </div>      
+                </div>
+        </div>
+
+        <table id="data-table" class="display">
+            <thead>
+              <tr>
+                <th>Station Code</th> 
+                <th>Gear</th>
+                <th>Gear ID</th>
+                <th>Date Of Inspection</th>
+                <th>Deficiency</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+</div>
+</div>
+   
+    <%- include("includes/sidebarJsLinks.ejs") %>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <!-- Select2 JS -->
+    
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/js/select2.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script> -->
+    <!-- Your custom script -->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>  -->
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/update/update.js"></script>
+    <script src="/sidebar/sidebar.js"></script>
+    
+</body>
+</html>
